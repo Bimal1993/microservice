@@ -1,0 +1,15 @@
+# http://localhost:8071/accounts/prod
+
+{"name":"accounts","profiles":["prod"],"label":null,"version":null,"state":null,"propertySources":[{"name":"classpath:/config/accounts-prod.properties","source":
+{"accounts.msg":"Prod application","accounts.build-version":"1","accounts.mailDetails.hostName":"prod@bank.com","accounts.mailDetails.port":"1212",
+"accounts.mailDetails.from":"prod@bank.com","accounts.mailDetails.subject":"Production Environment"}},
+{"name":"classpath:/config/accounts.properties","source":{"accounts.msg":"Default application","accounts.build-version":"3",
+"accounts.mailDetails.hostName":"general@bank.com","accounts.mailDetails.port":"1922","accounts.mailDetails.from":"general@bank.com",
+"accounts.mailDetails.subject":"Default Environment"}}]}
+
+# http://localhost:8071/accounts/dev
+
+# http://localhost:8071/accounts/default
+
+
+
