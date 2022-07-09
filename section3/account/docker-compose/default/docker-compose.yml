@@ -1,0 +1,104 @@
+version: "3.8"
+
+services:
+
+  mysql-standalone:
+    image: mysql
+    container_name: mysql-standalone
+    networks:
+    - spring-net
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=dockertest
+
+  configserver:
+    image: bimal1993/configserver:latest
+    mem_limit: 700m
+    ports:
+      - "8071:8071"
+    networks:
+     - spring-net
+     
+  eurekaserver:
+    image: bimal1993/eurekaserver:latest
+    container_name: fetebird-eurekaservice
+    mem_limit: 700m
+    ports:
+      - "8070:8070"
+    networks:
+     - spring-net
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 25s
+        max_attempts: 10
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      
+      
+  accounts:
+    image: bimal1993/accounts:latest
+    mem_limit: 700m
+    ports:
+      - "8080:8081"
+    networks:
+      - spring-net
+    depends_on:
+      - eurekaserver
+      - mysql-standalone
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+  
+  loans:
+    image: bimal1993/loans:latest
+    mem_limit: 700m
+    ports:
+      - "8090:8090"
+    networks:
+      - spring-net
+    depends_on:
+      - eurekaserver
+      - mysql-standalone
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+    
+  cards:
+    image: bimal1993/card:latest
+    mem_limit: 700m
+    ports:
+      - "9000:9000"
+    networks:
+      - spring-net
+    depends_on:
+      - eurekaserver
+      - mysql-standalone
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      
+networks:
+  spring-net:
